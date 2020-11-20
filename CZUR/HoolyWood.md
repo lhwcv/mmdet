@@ -1,4 +1,4 @@
-## HoolyWood Head
+## HollyWood Head
 
 - SSD 300 <br/>
   modify  config's data root in configs/__base__/datasets/hooly_wood_head.py 

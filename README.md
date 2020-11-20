@@ -153,4 +153,4 @@ Jiarui Xu ([@xvjiarui](https://github.com/xvjiarui)). Other core developers incl
 
 ## CZUR Additional
 
-- [HoolyHead](CZUR/HoolyWood.md)
+- [HollyWoodHead](CZUR/HoolyWood.md)
