@@ -10,8 +10,10 @@ from .resnext import ResNeXt
 from .ssd_vgg import SSDVGG
 from .blaze import  BlazeFace
 from .cz_head import  CZ_PersonHeadBackbone
+from .yolo_fastest_backbone import  YOLOFastestBackBone
 
 __all__ = [
     'RegNet', 'ResNet', 'ResNetV1d', 'ResNeXt', 'SSDVGG', 'HRNet', 'Res2Net',
-    'HourglassNet', 'DetectoRS_ResNet', 'DetectoRS_ResNeXt', 'Darknet','BlazeFace','CZ_PersonHeadBackbone'
+    'HourglassNet', 'DetectoRS_ResNet', 'DetectoRS_ResNeXt', 'Darknet','BlazeFace',
+    'CZ_PersonHeadBackbone','YOLOFastestBackBone'
 ]

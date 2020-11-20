@@ -115,7 +115,6 @@ class YOLOV3Neck(nn.Module):
         outs = []
         out = self.detect1(feats[-1])
         outs.append(out)
-
         for i, x in enumerate(reversed(feats[:-1])):
             conv = getattr(self, f'conv{i+1}')
             tmp = conv(out)
@@ -128,6 +127,69 @@ class YOLOV3Neck(nn.Module):
             out = detect(tmp)
             outs.append(out)
 
+        return tuple(outs)
+
+    def init_weights(self):
+        """Initialize the weights of module."""
+        # init is done in ConvModule
+        pass
+
+class CblConv(nn.Module):
+    def __init__(self,in_channels,out_channels,kernel_size,groups=1,padding=1):
+        super(CblConv, self).__init__()
+        self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding,groups=groups,
+                              bias=False)
+        self.bn = nn.BatchNorm2d(out_channels,momentum=0.03, eps=1E-4)
+        self.activation = nn.LeakyReLU(0.1,inplace=True)
+
+    def forward(self, x):
+        x = self.conv(x)
+        x = self.bn(x)
+        x = self.activation(x)
+        return x
+
+class LinearCblConv(nn.Module):
+    def __init__(self,in_channels,out_channels,kernel_size,groups=1,padding=1):
+        super(LinearCblConv, self).__init__()
+        self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding,groups=groups,
+                              bias=False)
+        self.bn = nn.BatchNorm2d(out_channels,momentum=0.03, eps=1E-4)
+        # self.activation = nn.LeakyReLU(0.1,inplace=True)
+
+    def forward(self, x):
+        x = self.conv(x)
+        x = self.bn(x)
+        # x = self.activation(x)
+        return x
+
+class DeepWish(nn.Module):
+    def __init__(self,in_channels,out_channels):
+        super(DeepWish, self).__init__()
+        self.groups_conv = CblConv(in_channels=in_channels,out_channels=in_channels,kernel_size=5,groups=in_channels)
+        self.point_conv = LinearCblConv(in_channels=in_channels,out_channels=out_channels,kernel_size=1)
+
+    def forward(self, x):
+        x = self.groups_conv(x)
+        x = self.point_conv(x)
+        return x
+
+
+@NECKS.register_module()
+class YOLOV3NeckCBLFastest(nn.Module):
+    def __init__(self):
+        super(YOLOV3NeckCBLFastest, self).__init__()
+        self.conv0 = CblConv(in_channels=232, out_channels=96, kernel_size=1, padding=0)
+
+    def forward(self, feats):
+        assert len(feats) == 2
+        # processed from bottom (high-lvl) to top (low-lvl)
+        outs = []
+
+        tmp = F.interpolate(feats[1], scale_factor=2)
+        tmp = torch.cat((feats[0], tmp), 1)
+        out = self.conv0(tmp)
+        outs.append(out)
+        outs.append(feats[1])
         return tuple(outs)
 
     def init_weights(self):

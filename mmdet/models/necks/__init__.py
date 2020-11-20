@@ -7,9 +7,9 @@ from .nas_fpn import NASFPN
 from .nasfcos_fpn import NASFCOS_FPN
 from .pafpn import PAFPN
 from .rfp import RFP
-from .yolo_neck import YOLOV3Neck
+from .yolo_neck import YOLOV3Neck,YOLOV3NeckCBLFastest
 
 __all__ = [
     'FPN', 'BFP', 'ChannelMapper', 'HRFPN', 'NASFPN', 'FPN_CARAFE', 'PAFPN',
-    'NASFCOS_FPN', 'RFP', 'YOLOV3Neck'
+    'NASFCOS_FPN', 'RFP', 'YOLOV3Neck','YOLOV3NeckCBLFastest'
 ]
